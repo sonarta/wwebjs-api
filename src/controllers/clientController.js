@@ -1812,6 +1812,49 @@ const setBackgroundSync = async (req, res) => {
   }
 }
 
+/**
+ * Retrieve the contact lid and phone number for a specific chat.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.body.chatId - The unique identifier of the chat to unmute.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const getContactLidAndPhone = async (req, res) => {
+  /*
+    #swagger.summary = 'Get contact lid and phone'
+    #swagger.description = 'Retrieve the contact lid and phone number for a specific chat'
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          userIds: {
+            type: 'array',
+            items: {
+              type: 'string',
+              description: 'The unique identifier of the user',
+            },
+            example: ['6281288888888@c.us']
+          },
+        }
+      },
+    }
+  */
+  try {
+    const { userIds = [] } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const result = await client.getContactLidAndPhone(userIds)
+    res.json({ success: true, data: result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
 module.exports = {
   getClassInfo,
   acceptInvite,
@@ -1860,5 +1903,6 @@ module.exports = {
   openChatWindow,
   openChatWindowAt,
   resetState,
-  setBackgroundSync
+  setBackgroundSync,
+  getContactLidAndPhone
 }

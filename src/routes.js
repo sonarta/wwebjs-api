@@ -108,6 +108,7 @@ clientRouter.post('/openChatWindow/:sessionId', [middleware.sessionNameValidatio
 clientRouter.post('/openChatWindowAt/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.openChatWindowAt)
 clientRouter.post('/resetState/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.resetState)
 clientRouter.post('/setBackgroundSync/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.setBackgroundSync)
+clientRouter.post('/getContactLidAndPhone/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.getContactLidAndPhone)
 
 /**
  * ================
