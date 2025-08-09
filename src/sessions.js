@@ -435,6 +435,13 @@ const initializeEvents = (client, sessionId) => {
       triggerWebSocket(sessionId, 'vote_update', { vote })
     })
   }
+
+  if (isEventEnabled('code')) {
+    client.on('code', (code) => {
+      triggerWebhook(sessionWebhook, sessionId, 'code', { code })
+      triggerWebSocket(sessionId, 'code', { code })
+    })
+  }
 }
 
 // Function to delete client session folder
