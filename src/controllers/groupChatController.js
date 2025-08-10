@@ -680,6 +680,63 @@ const rejectGroupMembershipRequests = async (req, res) => {
   }
 }
 
+/**
+ * Executes a method on the group associated with the given sessionId.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.body.chatId - The unique identifier of the chat.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const runMethod = async (req, res) => {
+  /*
+    #swagger.summary = 'Execute a method on the group'
+    #swagger.description = 'Execute a method on the group and return the result'
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          chatId: {
+            type: 'string',
+            description: 'Unique WhatsApp id for the given chat group',
+            example: 'XXXXXXXXXX@g.us'
+          },
+          method: {
+            type: 'string',
+            description: 'The name of the method to execute',
+            example: 'getLabels'
+          },
+          options: {
+            anyOf: [
+              { type: 'object' },
+              { type: 'string' }
+            ],
+            description: 'The options to pass to the method',
+          }
+        }
+      },
+    }
+  */
+  try {
+    const { chatId, method, options } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const chat = await client.getChatById(chatId)
+    if (!chat.isGroup) { throw new Error('The chat is not a group') }
+    if (typeof chat[method] !== 'function') {
+      throw new Error('Method is not implemented')
+    }
+    const result = options ? await chat[method](options) : await chat[method]()
+    res.json({ success: true, data: result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
 module.exports = {
   getClassInfo,
   addParticipants,
@@ -697,5 +754,6 @@ module.exports = {
   deletePicture,
   getGroupMembershipRequests,
   approveGroupMembershipRequests,
-  rejectGroupMembershipRequests
+  rejectGroupMembershipRequests,
+  runMethod
 }

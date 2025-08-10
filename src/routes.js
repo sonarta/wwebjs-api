@@ -109,6 +109,7 @@ clientRouter.post('/openChatWindowAt/:sessionId', [middleware.sessionNameValidat
 clientRouter.post('/resetState/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.resetState)
 clientRouter.post('/setBackgroundSync/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.setBackgroundSync)
 clientRouter.post('/getContactLidAndPhone/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.getContactLidAndPhone)
+clientRouter.post('/runMethod/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], clientController.runMethod)
 
 /**
  * ================
@@ -133,6 +134,7 @@ chatRouter.post('/markUnread/:sessionId', [middleware.sessionNameValidation, mid
 chatRouter.post('/syncHistory/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], chatController.syncHistory)
 chatRouter.post('/getLabels/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], chatController.getLabels)
 chatRouter.post('/changeLabels/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], chatController.changeLabels)
+chatRouter.post('/runMethod/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], chatController.runMethod)
 
 /**
  * ================
@@ -161,6 +163,7 @@ groupChatRouter.post('/deletePicture/:sessionId', [middleware.sessionNameValidat
 groupChatRouter.post('/getGroupMembershipRequests/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], groupChatController.getGroupMembershipRequests)
 groupChatRouter.post('/approveGroupMembershipRequests/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], groupChatController.approveGroupMembershipRequests)
 groupChatRouter.post('/rejectGroupMembershipRequests/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], groupChatController.rejectGroupMembershipRequests)
+groupChatRouter.post('/runMethod/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], groupChatController.runMethod)
 
 /**
  * ================
@@ -190,6 +193,7 @@ messageRouter.post('/getReactions/:sessionId', [middleware.sessionNameValidation
 messageRouter.post('/getGroupMentions/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], messageController.getGroupMentions)
 messageRouter.post('/edit/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], messageController.edit)
 messageRouter.post('/getContact/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], messageController.getContact)
+messageRouter.post('/runMethod/:sessionId', [middleware.sessionNameValidation, middleware.sessionValidation], messageController.runMethod)
 
 /**
  * ================

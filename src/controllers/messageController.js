@@ -735,6 +735,68 @@ const getContact = async (req, res) => {
   }
 }
 
+/**
+ * Executes a method on the message associated with the given sessionId.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.body.chatId - The unique identifier of the chat.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const runMethod = async (req, res) => {
+  /*
+    #swagger.summary = 'Execute a method on the message'
+    #swagger.description = 'Execute a method on the message and return the result'
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          chatId: {
+            type: 'string',
+            description: 'The chat id which contains the message',
+            example: '6281288888888@c.us'
+          },
+          messageId: {
+            type: 'string',
+            description: 'Unique WhatsApp identifier for the message',
+            example: 'ABCDEF999999999'
+          },
+          method: {
+            type: 'string',
+            description: 'The name of the method to execute',
+            example: 'getInfo'
+          },
+          options: {
+            anyOf: [
+              { type: 'object' },
+              { type: 'string' }
+            ],
+            description: 'The options to pass to the method',
+          }
+        }
+      },
+    }
+  */
+  try {
+    const { messageId, chatId, method, options } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const message = await _getMessageById(client, messageId, chatId)
+    if (!message) { throw new Error('Message not found') }
+    if (typeof message[method] !== 'function') {
+      throw new Error('Method is not implemented')
+    }
+    const result = options ? await message[method](options) : await message[method]()
+    res.json({ success: true, data: result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
 module.exports = {
   getClassInfo,
   deleteMessage,
@@ -753,5 +815,6 @@ module.exports = {
   getReactions,
   getGroupMentions,
   edit,
-  getContact
+  getContact,
+  runMethod
 }
