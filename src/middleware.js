@@ -214,6 +214,21 @@ const groupChatSwagger = async (req, res, next) => {
   next()
 }
 
+const channelSwagger = async (req, res, next) => {
+  /*
+    #swagger.tags = ['Channel Chat']
+    #swagger.responses[500] = {
+      description: "Server failure.",
+      content: {
+        "application/json": {
+          schema: { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    }
+  */
+  next()
+}
+
 module.exports = {
   sessionValidation,
   apikey,
@@ -224,5 +239,6 @@ module.exports = {
   messageSwagger,
   chatSwagger,
   groupChatSwagger,
+  channelSwagger,
   rateLimiter
 }

@@ -1319,7 +1319,7 @@ const unpinChat = async (req, res) => {
 
 const setProfilePicture = async (req, res) => {
   /*
-    #swagger.summary = 'Set the current user's profile picture'
+    #swagger.summary = 'Set the current user\'s profile picture'
     #swagger.requestBody = {
       required: true,
       schema: {
@@ -1856,6 +1856,264 @@ const getContactLidAndPhone = async (req, res) => {
 }
 
 /**
+ * Gets all cached Channel instances.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const getChannels = async (req, res) => {
+  /*
+    #swagger.summary = 'Get channels from the client'
+    #swagger.description = 'Retrieve a list of channels from the client'
+  */
+  try {
+    const client = sessions.get(req.params.sessionId)
+    const result = await client.getChannels()
+    res.json({ success: true, result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
+ * Creates a new channel.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const createChannel = async (req, res) => {
+  /*
+    #swagger.summary = 'Create a new channel',
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            description: 'The title of the channel',
+            example: 'My New Channel'
+          },
+          options: {
+            type: 'object',
+            properties: {
+              description: {
+                type: 'string',
+                description: 'The description of the channel',
+                example: 'This is my new channel'
+              },
+            }
+          }
+        }
+      },
+    }
+  */
+  try {
+    const { title, options } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const result = options ? await client.createChannel(title, options) : await client.createChannel(title)
+    res.json({ success: true, result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
+ * Subscribes to a new channel.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const subscribeToChannel = async (req, res) => {
+  /*
+    #swagger.summary = 'Subscribe to a channel',
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          channelId: {
+            type: 'string',
+            description: 'The ID of the channel',
+            example: 'XXXXXXXXXX@newsletter'
+          },
+        }
+      },
+    }
+  */
+  try {
+    const { channelId } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const result = await client.subscribeToChannel(channelId)
+    res.json({ success: true, result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
+ * Unsubscribe from a channel.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const unsubscribeFromChannel = async (req, res) => {
+  /*
+    #swagger.summary = 'Unsubscribe from channel',
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          channelId: {
+            type: 'string',
+            description: 'The ID of the channel',
+            example: 'XXXXXXXXXX@newsletter'
+          },
+          options: {
+            type: 'object',
+            properties: {
+              deleteLocalModels: {
+                type: 'boolean',
+                example: true
+              },
+            }
+          }
+        }
+      },
+    }
+  */
+  try {
+    const { channelId, options } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const result = options ? await client.unsubscribeFromChannel(channelId, options) : await client.unsubscribeFromChannel(channelId)
+    res.json({ success: true, result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
+ * Search channels.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const searchChannels = async (req, res) => {
+  /*
+    #swagger.summary = 'Search channels',
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          searchOptions: {
+            properties: {
+              searchText: {
+                type: 'string',
+                description: 'The text to search for in channel names',
+                example: ''
+              },
+              countryCodes: {
+                type: 'array',
+                description: 'An array of country codes in ISO 3166-1 alpha-2 standard to search',
+                example: ['US', 'CA']
+              },
+              skipSubscribedNewsletters: {
+                type: 'boolean',
+                description: 'If true, channels that user is subscribed to won\'t appear in found channels',
+                example: true
+              },
+              view: {
+                type: 'number',
+                description: 'The category of channels to get',
+                example: 0
+              },
+              limit: {
+                type: 'number',
+                description: 'The maximum number of channels to return',
+                example: 10
+              }
+            }
+          }
+        }
+      },
+    }
+  */
+  try {
+    const { searchOptions = {} } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const foundChannels = await client.searchChannels(searchOptions)
+    res.json({ success: true, result: foundChannels })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
+ * Gets a Channel instance by invite code.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The HTTP request object containing the chatId and sessionId.
+ * @param {string} req.body.inviteCode - The unique identifier of the channel to retrieve.
+ * @param {string} req.params.sessionId - The unique identifier of the session associated with the client to use.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<Object>} - A Promise that resolves with a JSON object containing a success flag and the result of the operation.
+ * @throws {Error} - If an error occurs during the operation, it is thrown and handled by the catch block.
+ */
+const getChannelByInviteCode = async (req, res) => {
+  /*
+    #swagger.summary = 'Get channel by invite code'
+    #swagger.requestBody = {
+      required: true,
+      schema: {
+        type: 'object',
+        properties: {
+          inviteCode: {
+            type: 'string',
+            description: 'The code that comes after the \"https://whatsapp.com/channel/\"',
+          },
+        }
+      },
+    }
+  */
+  try {
+    const { inviteCode } = req.body
+    const client = sessions.get(req.params.sessionId)
+    const result = await client.getChannelByInviteCode(inviteCode)
+    res.json({ success: true, result })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
  * Executes a method on the client associated with the given sessionId.
  *
  * @async
@@ -1954,5 +2212,11 @@ module.exports = {
   resetState,
   setBackgroundSync,
   getContactLidAndPhone,
+  getChannels,
+  getChannelByInviteCode,
+  createChannel,
+  subscribeToChannel,
+  unsubscribeFromChannel,
+  searchChannels,
   runMethod
 }
