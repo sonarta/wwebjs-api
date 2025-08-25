@@ -1,6 +1,6 @@
 const qr = require('qr-image')
 const { setupSession, deleteSession, reloadSession, validateSession, flushSessions, destroySession, sessions } = require('../sessions')
-const { sendErrorResponse, waitForNestedObject } = require('../utils')
+const { sendErrorResponse, waitForNestedObject, exposeFunctionIfAbsent } = require('../utils')
 const { logger } = require('../logger')
 
 /**
@@ -369,6 +369,11 @@ const requestPairingCode = async (req, res) => {
     if (!client) {
       return res.json({ success: false, message: 'session_not_found' })
     }
+    // hotfix https://github.com/pedroslopez/whatsapp-web.js/pull/3706
+    await exposeFunctionIfAbsent(client.pupPage, 'onCodeReceivedEvent', async (code) => {
+      client.emit('code', code)
+      return code
+    })
     const result = await client.requestPairingCode(phoneNumber, showNotification)
     res.json({ success: true, result })
   } catch (error) {

@@ -63,6 +63,16 @@ const sleep = function (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const exposeFunctionIfAbsent = async (page, name, fn) => {
+  const exist = await page.evaluate((name) => {
+    return !!window[name]
+  }, name)
+  if (exist) {
+    return
+  }
+  await page.exposeFunction(name, fn)
+}
+
 module.exports = {
   triggerWebhook,
   sendErrorResponse,
@@ -70,5 +80,6 @@ module.exports = {
   isEventEnabled,
   sendMessageSeenStatus,
   decodeBase64,
-  sleep
+  sleep,
+  exposeFunctionIfAbsent
 }
