@@ -45,7 +45,7 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && chmod -R 755 /app/sessions
 
 # Copy only production dependencies from deps stage
-COPY --from=deps /usr/src/app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 
 # Copy application files
 COPY . .
