@@ -5,9 +5,10 @@ FROM node:22-bookworm-slim AS base
 ENV CHROME_BIN="/usr/bin/chromium" \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true" \
     NODE_ENV="production" \
-    PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium"
+    PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium" \
+    SESSIONS_PATH="/app/sessions"
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 FROM base AS deps
 
@@ -38,9 +39,10 @@ RUN apt-get update && \
 # Create a non-root user and set up directories
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && mkdir -p /home/pptruser/Downloads \
-    && mkdir -p /home/pptruser/sessions \
+    && mkdir -p /app/sessions \
     && chown -R pptruser:pptruser /home/pptruser \
-    && chmod -R 755 /home/pptruser
+    && chown -R pptruser:pptruser /app/sessions \
+    && chmod -R 755 /app/sessions
 
 # Copy only production dependencies from deps stage
 COPY --from=deps /usr/src/app/node_modules ./node_modules
@@ -49,8 +51,8 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 
 # Set permissions for the app directory
-RUN chown -R pptruser:pptruser /usr/src/app \
-    && chmod -R 755 /usr/src/app
+RUN chown -R pptruser:pptruser /app \
+    && chmod -R 755 /app
 
 # Switch to non-root user
 USER pptruser

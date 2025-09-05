@@ -1,11 +1,7 @@
-# The version property is now optional in modern Docker Compose
-version: '3.8'
-
 name: wwebjs-api
 
 services:
   api:
-    # image: avoylenko/wwebjs-api:latest
     build: .
     container_name: wwebjs-api
     restart: always
@@ -34,7 +30,7 @@ services:
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       
       # Session Configuration
-      - SESSIONS_PATH=/home/pptruser/sessions
+      - SESSIONS_PATH=/app/sessions
       
       # Enable debug logging
       - DEBUG=puppeteer:*
@@ -48,7 +44,7 @@ services:
     
     # Mount session directory for persistence with correct permissions
     volumes:
-      - ./sessions:/home/pptruser/sessions
+      - ./sessions:/app/sessions
     
     # Run as non-root user with host user ID
     user: "1000:1000"
