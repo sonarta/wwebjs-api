@@ -47,8 +47,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set permissions for the app directory
-RUN chown -R pptruser:pptruser /app \
-    && chmod -R 755 /app
+RUN chmod -R 755 /app
 
 # Run as root to avoid permission issues
 # USER pptruser
