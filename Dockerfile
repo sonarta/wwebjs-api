@@ -36,13 +36,13 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user and set up directories
+# Create a non-root user and set up directories with proper permissions
 RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && mkdir -p /home/pptruser/Downloads \
     && mkdir -p /app/sessions \
     && chown -R pptruser:pptruser /home/pptruser \
-    && chown -R pptruser:pptruser /app/sessions \
-    && chmod -R 755 /app/sessions
+    && chown -R pptruser:pptruser /app \
+    && chmod -R 777 /app/sessions
 
 # Copy only production dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules

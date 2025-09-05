@@ -16,6 +16,8 @@ services:
       - ENABLE_LOCAL_CALLBACK_EXAMPLE=TRUE
       - ENABLE_SWAGGER_ENDPOINT=TRUE
       - RECOVER_SESSIONS=TRUE
+      - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=2048
       
       # Security Settings
       # - API_KEY=your_global_api_key_here # Uncomment and set for production
@@ -42,22 +44,19 @@ services:
     cap_add:
       - SYS_ADMIN
     
-    # Mount session directory for persistence with correct permissions
+    # Mount session directory with proper permissions
     volumes:
-      - ./sessions:/app/sessions
+      - sessions_volume:/app/sessions
     
-    # Run as non-root user with host user ID
-    user: "1000:1000"
+    # Run as non-root user with host user ID (or use root for debugging)
+    user: "1000:1000"  # Comment this and uncomment below to run as root
+    # user: "root"
     
     # Ensure the container has enough shared memory for Chrome
     shm_size: 1gb
     
     # Run in privileged mode to avoid Chrome sandbox issues
     privileged: true
-    # Optional healthcheck
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 40s
+
+volumes:
+  sessions_volume:
