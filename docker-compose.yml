@@ -44,13 +44,14 @@ services:
     cap_add:
       - SYS_ADMIN
     
-    # Mount session directory with proper permissions
+    # Mount session directory with full permissions
     volumes:
       - sessions_volume:/app/sessions
+      # Also mount a tmpfs for Chrome sandbox
+      - /dev/shm:/dev/shm
     
-    # Run as non-root user with host user ID (or use root for debugging)
-    user: "1000:1000"  # Comment this and uncomment below to run as root
-    # user: "root"
+    # Run as root to ensure proper permissions
+    user: "root"
     
     # Ensure the container has enough shared memory for Chrome
     shm_size: 1gb

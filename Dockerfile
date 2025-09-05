@@ -36,12 +36,8 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user and set up directories with proper permissions
-RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
-    && mkdir -p /home/pptruser/Downloads \
-    && mkdir -p /app/sessions \
-    && chown -R pptruser:pptruser /home/pptruser \
-    && chown -R pptruser:pptruser /app \
+# Create and set up sessions directory with full permissions
+RUN mkdir -p /app/sessions \
     && chmod -R 777 /app/sessions
 
 # Copy only production dependencies from deps stage
@@ -54,8 +50,8 @@ COPY . .
 RUN chown -R pptruser:pptruser /app \
     && chmod -R 755 /app
 
-# Switch to non-root user
-USER pptruser
+# Run as root to avoid permission issues
+# USER pptruser
 
 # Expose the port the app runs on
 EXPOSE 3000
