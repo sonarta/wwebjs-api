@@ -1,0 +1,26 @@
+{
+  "comment": "Chrome seccomp policy for running in Docker",
+  "defaultAction": "SCMP_ACT_ALLOW",
+  "syscalls": [
+    {
+      "name": "chmod",
+      "action": "SCMP_ACT_ERRNO"
+    },
+    {
+      "name": "chown",
+      "action": "SCMP_ACT_ERRNO"
+    },
+    {
+      "name": "mknod",
+      "action": "SCMP_ACT_ERRNO"
+    },
+    {
+      "name": "setuid",
+      "action": "SCMP_ACT_ERRNO"
+    },
+    {
+      "name": "setgid",
+      "action": "SCMP_ACT_ERRNO"
+    }
+  ]
+}

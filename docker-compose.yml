@@ -1,11 +1,12 @@
 # The version property is now optional in modern Docker Compose
-# version: '3.8'
+version: '3.8'
 
 name: wwebjs-api
 
 services:
   api:
-    image: avoylenko/wwebjs-api:latest
+    # image: avoylenko/wwebjs-api:latest
+    build: .
     container_name: wwebjs-api
     restart: always
     ports:
@@ -27,14 +28,36 @@ services:
       # - RATE_LIMIT_MAX=1000 # Maximum connections per time window
       # - RATE_LIMIT_WINDOW_MS=1000 # Time window in milliseconds
       
-      # WhatsApp Web Configuration
-      # - WEB_VERSION='2.2328.5' # Specific WhatsApp Web version
-      # - WEB_VERSION_CACHE_TYPE=none # Options: local, remote, none
+      # Browser Configuration
+      - CHROME_BIN=/usr/bin/chromium
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      
+      # Session Configuration
+      - SESSIONS_PATH=/home/pptruser/sessions
+      
+      # Enable debug logging
+      - DEBUG=puppeteer:*
       
       # Callback Configuration
       - DISABLED_CALLBACKS=message_ack|message_reaction
+    
+    # Add necessary capabilities for Chrome to run in container
+    cap_add:
+      - SYS_ADMIN
+    
+    # Mount session directory for persistence with correct permissions
     volumes:
-      - ./sessions:/usr/src/app/sessions
+      - ./sessions:/home/pptruser/sessions
+    
+    # Run as non-root user with host user ID
+    user: "1000:1000"
+    
+    # Ensure the container has enough shared memory for Chrome
+    shm_size: 1gb
+    
+    # Run in privileged mode to avoid Chrome sandbox issues
+    privileged: true
     # Optional healthcheck
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
