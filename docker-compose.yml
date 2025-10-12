@@ -12,7 +12,7 @@ services:
       - "${PORT:-3000}:3000"
     env_file: .env
     volumes:
-      - ./sessions:/usr/src/app/sessions
+      - ../files/sessions:/app/sessions
     # Optional healthcheck
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
