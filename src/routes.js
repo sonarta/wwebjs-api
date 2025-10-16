@@ -2,7 +2,7 @@ const express = require('express')
 const routes = express.Router()
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('../swagger.json')
-const { enableLocalCallbackExample, enableSwaggerEndpoint } = require('./config')
+const { enableLocalCallbackExample, enableSwaggerEndpoint, basePath } = require('./config')
 
 const middleware = require('./middleware')
 const healthController = require('./controllers/healthController')
@@ -257,8 +257,19 @@ channelRouter.post('/deleteChannel/:sessionId', [middleware.sessionNameValidatio
  * ================
  */
 if (enableSwaggerEndpoint) {
+  // Clone swagger document to modify servers dynamically
+  const swaggerDocumentWithBasePath = JSON.parse(JSON.stringify(swaggerDocument))
+  
+  // Update servers to include the base path
+  swaggerDocumentWithBasePath.servers = [
+    {
+      url: basePath === '/' ? '/' : basePath,
+      description: 'Current server'
+    }
+  ]
+  
   routes.use('/api-docs', swaggerUi.serve)
-  routes.get('/api-docs', swaggerUi.setup(swaggerDocument) /* #swagger.ignore = true */)
+  routes.get('/api-docs', swaggerUi.setup(swaggerDocumentWithBasePath) /* #swagger.ignore = true */)
 }
 
 module.exports = { routes }

@@ -3,6 +3,9 @@ const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0', autoBody: 
 const outputFile = './swagger.json'
 const endpointsFiles = ['./src/routes.js']
 
+// Get base path from environment or default to '/'
+const basePath = process.env.BASE_PATH || '/'
+
 const doc = {
   info: {
     title: 'WWebJS API',
@@ -10,11 +13,11 @@ const doc = {
   },
   servers: [
     {
-      url: '/',
+      url: basePath,
       description: 'default server'
     },
     {
-      url: 'http://localhost:3000',
+      url: `http://localhost:3000${basePath}`,
       description: 'localhost server'
     }
   ],
